@@ -1,0 +1,12 @@
+{
+  "name": "list",
+  "description": "Displays a list of the currently playing tracks and the tracks in the queue",
+  "options": [
+    {
+      "name": "page",
+      "description": "The page to display",
+      "type": 4,
+      "required": "false"
+    }
+  ]
+}

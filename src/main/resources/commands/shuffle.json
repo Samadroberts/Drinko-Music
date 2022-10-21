@@ -1,0 +1,12 @@
+{
+  "name": "shuffle",
+  "description": "Shuffles the queue indefinitely",
+  "options": [
+    {
+      "name": "enable",
+      "description": "Enable or disable shuffling the queue",
+      "type": 5,
+      "required": "true"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "name": "repeat",
+  "description": "repeat the same track or tracks",
+  "options": [
+    {
+      "name": "type",
+      "description": "repeat the current track or all tracks",
+      "type": 3,
+      "required": "true",
+      "choices": [
+        {
+          "name": "All",
+          "value": "All"
+        },
+        {
+          "name": "One",
+          "value": "ONE"
+        },
+        {
+          "name": "None",
+          "value": "NONE"
+        }
+      ]
+    }
+  ]
+}

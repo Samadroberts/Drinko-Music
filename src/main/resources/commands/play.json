@@ -1,0 +1,12 @@
+{
+  "name": "play",
+  "description": "Play a track by providing a link",
+  "options": [
+    {
+      "name": "link",
+      "description": "link",
+      "type": 3,
+      "required": "true"
+    }
+  ]
+}
