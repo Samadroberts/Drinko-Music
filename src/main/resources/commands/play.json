@@ -4,7 +4,7 @@
   "options": [
     {
       "name": "link-or-query",
-      "description": "youtube, soundcloud, twitch, bandcamp, vimeo, beam, getyarn or http link, query will search youtube",
+      "description": "Youtube, soundcloud, twitch, bandcamp, vimeo, beam, getyarn or http link, query will search youtube",
       "type": 3,
       "required": "true"
     }

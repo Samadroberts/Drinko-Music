@@ -4,7 +4,7 @@
   "options": [
     {
       "name": "number",
-      "description": "Number of tracks to skip",
+      "description": "The number of tracks to skip",
       "type": 4,
       "required": "false"
     }
