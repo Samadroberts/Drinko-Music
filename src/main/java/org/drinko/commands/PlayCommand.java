@@ -52,6 +52,11 @@ public class PlayCommand implements SlashCommand {
                 .map(PartialMember::getVoiceState)
                 .orElse(Mono.empty());
 
+
+//        Mono<Void> noUserInVoice = voiceStateOrEmpty.defaultIfEmpty(null)
+//                .flatMap((ignore) -> event.reply("You must join a voice channel first.").withEphemeral(true));
+
+
         Mono<VoiceConnection> connection = voiceStateOrEmpty
                 .flatMap(VoiceState::getChannel)
                 .flatMap(voiceChannel -> voiceConnectionService.getNewOrExistingConnection(voiceChannel, event.getInteraction().getChannel()));
@@ -87,7 +92,7 @@ public class PlayCommand implements SlashCommand {
                                             .withEphemeral(true))
                                             .then();
                             }
-                        }));
+                        })).switchIfEmpty(event.createFollowup("You must join a voice channel first.").then());
 
         return event.deferReply().then(handleSongLoad.then());
     }
