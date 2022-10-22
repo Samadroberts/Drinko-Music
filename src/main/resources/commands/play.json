@@ -1,10 +1,10 @@
 {
   "name": "play",
-  "description": "Play a track by providing a link",
+  "description": "Play a track or playlist by providing a link or search query",
   "options": [
     {
-      "name": "link",
-      "description": "link",
+      "name": "link-or-query",
+      "description": "youtube, soundcloud, twitch, bandcamp, vimeo, beam, getyarn or http link, query will search youtube",
       "type": 3,
       "required": "true"
     }

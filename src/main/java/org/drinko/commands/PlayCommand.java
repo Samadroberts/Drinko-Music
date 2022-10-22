@@ -108,7 +108,7 @@ public class PlayCommand implements SlashCommand {
     @RequiredArgsConstructor
     @Getter
     private enum Option {
-        LINK("link");
+        LINK("link-or-query");
         private final String value;
     }
 }
