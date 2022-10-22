@@ -3,4 +3,5 @@ logging:
     root: info
 
 server:
-  port: 8989
+  port: ${PORT:8989}
+
