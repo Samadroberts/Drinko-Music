@@ -22,8 +22,8 @@ public class SupportedAudioPlaylistResultHandler implements SupportedAudioItemRe
             if(tempResult == TrackQueueResult.PLAYING_NOW) {
                 result = TrackQueuedState.PLAYING_NOW;
                 audioTrackInfo = track.getInfo();
-            } else if (result != TrackQueuedState.PLAYING_NOW) {
-                if(tempResult == TrackQueueResult.QUEUED) {
+            } else if (tempResult == TrackQueueResult.QUEUED && result != TrackQueuedState.PLAYING_NOW && result != TrackQueuedState.QUEUED) {
+                if(result != TrackQueuedState.QUEUED) {
                     result = TrackQueuedState.QUEUED;
                     audioTrackInfo = track.getInfo();
                 }
