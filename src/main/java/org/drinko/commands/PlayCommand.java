@@ -10,6 +10,7 @@ import discord4j.core.spec.InteractionFollowupCreateSpec;
 import discord4j.voice.VoiceConnection;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.drinko.commands.exceptions.CommandIssuerNotInVoiceChat;
 import org.drinko.service.AudioLoadingService;
 import org.drinko.service.VoiceConnectionService;
 import org.springframework.stereotype.Component;
@@ -33,45 +34,45 @@ public class PlayCommand implements SlashCommand {
 
     @Override
     public Mono<Void> handle(ChatInputInteractionEvent event) {
-
-        Mono<VoiceState> voiceStateOrEmpty = event.getInteraction().getMember()
-                .map(PartialMember::getVoiceState)
-                .orElse(Mono.empty());
-
-        Mono<VoiceConnection> connection = voiceStateOrEmpty
-                .flatMap(VoiceState::getChannel)
-                .flatMap(voiceChannel -> voiceConnectionService.getNewOrExistingConnection(voiceChannel, event.getInteraction().getChannel()));
-
         final String linkOrQuery = getLink(event.getInteraction());
 
-        Mono<Void> handleSongLoad = connection.flatMap(voiceConnection ->
-                audioLoadingService.attemptToLoadLinkOrQuery(voiceConnection, linkOrQuery)
-                        .flatMap((result) -> {
-                            switch (result.getQueueResult()) {
-                                case QUEUED:
-                                    return event.createFollowup(InteractionFollowupCreateSpec.builder()
-                                            .addEmbed(getSongQueueEmbed(result.getAudioTrackInfo().title))
-                                            .build()).then();
-                                case PLAYING_NOW:
-                                    return event.createFollowup(InteractionFollowupCreateSpec.builder()
-                                            .addEmbed(getSongLoadedEmbed(result.getAudioTrackInfo().title))
-                                            .build()).then();
-                                case QUERY:
-                                    return audioLoadingService.attemptToQueryYoutube(
-                                                    voiceConnection.getGuildId(),
-                                                    linkOrQuery,
-                                                    event.getInteraction().getChannel()
-                                            ).flatMap(interactionFollowupCreateSpec -> event.createFollowup(interactionFollowupCreateSpec))
-                                            .then();
-                                case FAILED:
-                                default:
-                                    return event.createFollowup(InteractionFollowupCreateSpec.builder()
-                                                    .addEmbed(getFailedToLoadSongEmbed(linkOrQuery))
-                                                    .build()
-                                                    .withEphemeral(true))
-                                            .then();
-                            }
-                        }));
+
+        Mono<VoiceState> voiceStateOrEmpty = event.getInteraction().getMember()
+                .map(member -> member.getVoiceState().switchIfEmpty(Mono.error(new CommandIssuerNotInVoiceChat())))
+                .orElseGet(() -> Mono.empty());
+
+
+        Mono<Void> handleSongLoad = voiceStateOrEmpty
+                .onErrorResume(CommandIssuerNotInVoiceChat.class, (exception) -> event.createFollowup(exception.getMessage()).then(Mono.empty()))
+                .flatMap(VoiceState::getChannel)
+                .flatMap(voiceChannel -> voiceConnectionService.getNewOrExistingConnection(voiceChannel, event.getInteraction().getChannel())).flatMap(voiceConnection ->
+                        audioLoadingService.attemptToLoadLinkOrQuery(voiceConnection, linkOrQuery)
+                                .flatMap((result) -> {
+                                    switch (result.getQueueResult()) {
+                                        case QUEUED:
+                                            return event.createFollowup(InteractionFollowupCreateSpec.builder()
+                                                    .addEmbed(getSongQueueEmbed(result.getAudioTrackInfo().title))
+                                                    .build()).then();
+                                        case PLAYING_NOW:
+                                            return event.createFollowup(InteractionFollowupCreateSpec.builder()
+                                                    .addEmbed(getSongLoadedEmbed(result.getAudioTrackInfo().title))
+                                                    .build()).then();
+                                        case QUERY:
+                                            return audioLoadingService.attemptToQueryYoutube(
+                                                            voiceConnection.getGuildId(),
+                                                            linkOrQuery,
+                                                            event.getInteraction().getChannel()
+                                                    ).flatMap(interactionFollowupCreateSpec -> event.createFollowup(interactionFollowupCreateSpec))
+                                                    .then();
+                                        case FAILED:
+                                        default:
+                                            return event.createFollowup(InteractionFollowupCreateSpec.builder()
+                                                            .addEmbed(getFailedToLoadSongEmbed(linkOrQuery))
+                                                            .build()
+                                                            .withEphemeral(true))
+                                                    .then();
+                                    }
+                                }));
 
         return event.deferReply().then(handleSongLoad.then());
     }

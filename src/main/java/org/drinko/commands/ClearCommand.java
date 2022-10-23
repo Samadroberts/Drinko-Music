@@ -23,9 +23,13 @@ public class ClearCommand implements SlashCommand {
         if (guildId == null) {
             return event.reply("ERROR: Response from discord did not include guild_id").withEphemeral(true);
         }
-        return event.deferReply()
-                .then(event.createFollowup("Queue Cleared").doOnNext((ignore) ->
-                        guildVoiceService.getGuildVoiceSupport(guildId).getTrackScheduler().stopCurrentSongAndClearQueue()))
-                .then();
+        return event.deferReply().then(
+                event.createFollowup(getQueueClearedText())
+                        .doOnNext((ignore) -> guildVoiceService.getGuildVoiceSupport(guildId).getTrackScheduler().stopCurrentSongAndClearQueue())
+        ).then();
+    }
+
+    private static String getQueueClearedText() {
+        return "Queue Cleared.";
     }
 }
