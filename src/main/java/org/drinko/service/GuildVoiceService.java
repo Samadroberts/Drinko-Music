@@ -24,8 +24,6 @@ public class GuildVoiceService {
     }
 
     public void removeGuildVoiceSupport(Snowflake guildId) {
-        if(voiceGuildMap.containsKey(guildId)) {
-            voiceGuildMap.remove(guildId);
-        }
+        voiceGuildMap.remove(guildId);
     }
 }

@@ -74,7 +74,7 @@ public class AudioLoadingService {
         return searchResultHandler.loadResult().map(searchResult -> {
             switch (searchResult.getResult()) {
                 case LOADED:
-                    queryService.addSearchResults(guildId, searchResult.getSearchResults());
+                    queryService.addSearchResults(guildId, (audioTrack -> getCustomButtonId(audioTrack)), searchResult.getSearchResults());
                     return createSearchFollowup(searchResult.getSearchResults());
                 case FAILED_NO_MATCH:
                     return InteractionFollowupCreateSpec.builder()
@@ -99,10 +99,16 @@ public class AudioLoadingService {
                 .build();
     }
 
+
+
+    private static String getCustomButtonId(AudioTrack audioTrack) {
+        return audioTrack.getIdentifier();
+    }
+
     private ActionRow getButtons(List<AudioTrack> trackFromQuery) {
         List<Button> buttons = new ArrayList<>();
         for (int i = 0; i < trackFromQuery.size(); i++) {
-            buttons.add(Button.primary(trackFromQuery.get(i).getIdentifier(), String.valueOf(i + 1)));
+            buttons.add(Button.primary(getCustomButtonId(trackFromQuery.get(i)), String.valueOf(i + 1)));
         }
         return ActionRow.of(buttons);
     }

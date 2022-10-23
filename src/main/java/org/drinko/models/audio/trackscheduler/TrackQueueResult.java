@@ -4,5 +4,4 @@ public enum TrackQueueResult {
     QUEUED,
     PLAYING_NOW,
     FAILED,
-    ;
 }

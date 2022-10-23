@@ -44,6 +44,9 @@ public class AudioTrackQueue {
     }
 
     public void addToQueue(AudioTrack audio) {
+        if(audio == null) {
+            return;
+        }
         if (shuffled) {
             if (this.shuffledQueue.isEmpty()) {
                 //Queue is empty, don't add to normal queue

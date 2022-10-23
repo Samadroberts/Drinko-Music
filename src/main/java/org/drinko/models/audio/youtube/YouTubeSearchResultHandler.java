@@ -9,6 +9,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 @RequiredArgsConstructor
 public class YouTubeSearchResultHandler implements AudioLoadResultHandler {
@@ -17,7 +18,7 @@ public class YouTubeSearchResultHandler implements AudioLoadResultHandler {
 
     @Override
     public void trackLoaded(AudioTrack audioTrack) {
-        loadResult.tryEmitValue(new YoutubeSearchResult(YoutubeSearchResult.YoutubeSearchResultState.LOADED, Arrays.asList(audioTrack)));
+        loadResult.tryEmitValue(new YoutubeSearchResult(YoutubeSearchResult.YoutubeSearchResultState.LOADED, Collections.singletonList(audioTrack)));
     }
 
     @Override

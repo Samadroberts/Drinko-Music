@@ -23,7 +23,7 @@ import org.drinko.models.audio.trackscheduler.TrackScheduler;
 @Getter
 public class GuildVoiceSupport {
 
-    private Snowflake id;
+    private final Snowflake id;
     private final AudioPlayerManager audioPlayerManager;
     private final AudioPlayer audioPlayer;
     private final AudioProvider audioProvider;

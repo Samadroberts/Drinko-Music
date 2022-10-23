@@ -113,7 +113,7 @@ public class TrackScheduler extends AudioEventAdapter {
             return TrackQueueResult.FAILED;
         }
         audioTrackQueue.addToQueue(audioTrack);
-        if(isTrackPlaying()) {
+        if(!isTrackPlaying()) {
             playTrack(audioTrackQueue.poll());
             return TrackQueueResult.PLAYING_NOW;
         } else {
@@ -261,7 +261,7 @@ public class TrackScheduler extends AudioEventAdapter {
     }
 
     public boolean isTrackPlaying() {
-        return this.getCurrentlyPlayingOrScheduledTrack() == null;
+        return this.getCurrentlyPlayingOrScheduledTrack() != null;
     }
 
     public boolean isPaused() {

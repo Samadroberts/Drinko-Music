@@ -21,6 +21,7 @@ import java.time.temporal.ChronoUnit;
 @RequiredArgsConstructor
 public class VoiceConnectionService {
     private final GuildVoiceService guildVoiceService;
+    private final YoutubeSearchQueryService youtubeSearchQueryService;
     private final GatewayDiscordClient gatewayDiscordClient;
 
     public Mono<VoiceConnection> getNewOrExistingConnection(VoiceChannel voiceChannel, Mono<MessageChannel> commandChannel) {
@@ -86,6 +87,7 @@ public class VoiceConnectionService {
     public void handleDisconnect(Snowflake guildId) {
         guildVoiceService.getGuildVoiceSupport(guildId).getTrackScheduler().stopCurrentSongAndClearQueue();
         guildVoiceService.removeGuildVoiceSupport(guildId);
+        youtubeSearchQueryService.disconnectedFromGuild(guildId);
     }
 
 }
