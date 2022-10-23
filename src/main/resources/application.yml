@@ -5,3 +5,12 @@ logging:
 server:
   port: ${PORT:8989}
 
+discord:
+  api:
+    token: ${DISCORD_TOKEN}
+
+org:
+  drinko:
+    youtube:
+      username: ${YOUTUBE_USERNAME}
+      password: ${YOUTUBE_PASSWORD}
