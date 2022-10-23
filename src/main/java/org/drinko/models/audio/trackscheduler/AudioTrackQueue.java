@@ -8,14 +8,17 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.stream.Collectors;
 
 
 public class AudioTrackQueue {
     private final static RepeatMode SHUFFLED_REPEAT_MODE = RepeatMode.ALL;
 
-    private final LinkedList<AudioTrack> queue = new LinkedList<>();
-    private final LinkedList<AudioTrack> shuffledQueue = new LinkedList<>();
+    private final LinkedBlockingDeque<AudioTrack> queue = new LinkedBlockingDeque<>();
+    private final LinkedBlockingDeque<AudioTrack> shuffledQueue = new LinkedBlockingDeque<>();
     private RepeatMode repeatMode = RepeatMode.NONE;
 
     private boolean shuffled = false;
@@ -53,9 +56,10 @@ public class AudioTrackQueue {
                 this.shuffledQueue.add(audio.makeClone());
             } else {
                 // Queue is not empty add to both
+                this.shuffledQueue.addLast(audio.makeClone());
                 SecureRandom secureRandom = new SecureRandom();
-                int insertIndex = secureRandom.nextInt(this.shuffledQueue.size());
-                this.shuffledQueue.add(insertIndex, audio.makeClone());
+                int newHead = secureRandom.nextInt(this.shuffledQueue.size());
+                makeIndexNewHeadOfQueue(newHead);
                 this.queue.add(audio.makeClone());
             }
         } else {
