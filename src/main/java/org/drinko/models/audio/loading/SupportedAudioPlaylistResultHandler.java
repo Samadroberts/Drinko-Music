@@ -18,13 +18,15 @@ public class SupportedAudioPlaylistResultHandler implements SupportedAudioItemRe
         AudioTrackInfo audioTrackInfo = null;
         for (AudioTrack track : audioPlaylist.getTracks()) {
             TrackQueueResult tempResult = trackScheduler.queue(track);
-            if (result != TrackQueuedState.PLAYING_NOW || result != TrackQueuedState.QUEUED) {
-                if (tempResult == TrackQueueResult.PLAYING_NOW) {
-                    result = TrackQueuedState.PLAYING_NOW;
-                } else {
-                    result = TrackQueuedState.QUEUED;
-                }
+
+            if(tempResult == TrackQueueResult.PLAYING_NOW) {
+                result = TrackQueuedState.PLAYING_NOW;
                 audioTrackInfo = track.getInfo();
+            } else if (result != TrackQueuedState.PLAYING_NOW) {
+                if(tempResult == TrackQueueResult.QUEUED) {
+                    result = TrackQueuedState.QUEUED;
+                    audioTrackInfo = track.getInfo();
+                }
             }
         }
         return new SchedulingTrackResult(audioTrackInfo, result);
