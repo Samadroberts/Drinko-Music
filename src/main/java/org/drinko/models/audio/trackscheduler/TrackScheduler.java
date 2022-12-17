@@ -131,13 +131,6 @@ public class TrackScheduler extends AudioEventAdapter {
 
         resetRetriesForErroredTrack();
 
-//        if (RepeatMode.ONE.equals(audioTrackQueue.getRepeatMode())) {
-//            final AudioTrack currentTrack = getCurrentlyPlayingOrScheduledTrack();
-//            stopCurrentlyPlayingOrScheduledTrack();
-//            playTrack(currentTrack.makeClone());
-//            return SkipResult.success(1);
-//        }
-
         //Queue + track playing
         if (audioTrackQueue.size() + 1 <= numberToSkip && !RepeatMode.ALL.equals(audioTrackQueue.getRepeatMode())) {
             long queueSize = audioTrackQueue.size();

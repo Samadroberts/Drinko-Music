@@ -3,7 +3,6 @@ package org.drinko.service;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import discord4j.common.util.Snowflake;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

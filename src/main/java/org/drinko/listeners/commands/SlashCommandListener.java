@@ -2,7 +2,6 @@ package org.drinko.listeners.commands;
 
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
-import discord4j.discordjson.json.gateway.VoiceStateUpdate;
 import org.drinko.commands.SlashCommand;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
