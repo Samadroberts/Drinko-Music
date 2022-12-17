@@ -24,6 +24,8 @@ public class VoiceConnectionService {
     private final YoutubeSearchQueryService youtubeSearchQueryService;
     private final GatewayDiscordClient gatewayDiscordClient;
 
+    private static final int DISCONNECT_PERIOD_SECONDS = 10;
+
     public Mono<VoiceConnection> getNewOrExistingConnection(VoiceChannel voiceChannel, Mono<MessageChannel> commandChannel) {
         return voiceChannel.getClient().getVoiceConnectionRegistry().getVoiceConnection(voiceChannel.getGuildId())
                 .switchIfEmpty(setupNewConnection(voiceChannel, commandChannel));
@@ -56,7 +58,7 @@ public class VoiceConnectionService {
                 .flatMap(ignore -> voiceConnection.getChannelId())
                 .flatMap(channelId -> gatewayDiscordClient.getChannelById(channelId))
                 .cast(VoiceChannel.class)
-                .delayElements(Duration.of(2, ChronoUnit.SECONDS))
+                .delayElements(Duration.of(DISCONNECT_PERIOD_SECONDS, ChronoUnit.SECONDS))
                 .flatMap(voiceChannel -> getNumberOfBotUsersInVoiceChannel(voiceChannel))
                 .map(nonBotUsersInVC -> nonBotUsersInVC == 0)
                 .filter(isBotAlone -> isBotAlone)
