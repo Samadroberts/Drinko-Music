@@ -53,12 +53,13 @@ public class VoiceConnectionService {
         Mono<Boolean> isBotAloneInVoiceAfter10Seconds = gatewayDiscordClient.getEventDispatcher().on(VoiceStateUpdateEvent.class)
                 .filter(voiceStateUpdateEvent -> voiceStateUpdateEvent.isMoveEvent() || voiceStateUpdateEvent.isLeaveEvent())
                 .filterWhen(event -> isVoiceStateEventRelatedToExistingVoiceConnection(event, voiceConnection))
-                .flatMap(voiceStateUpdateEvent -> voiceConnection.getChannelId().flatMap(channelId -> gatewayDiscordClient.getChannelById(channelId)))
+                .flatMap(ignore -> voiceConnection.getChannelId())
+                .flatMap(channelId -> gatewayDiscordClient.getChannelById(channelId))
                 .cast(VoiceChannel.class)
-                .delayElements(Duration.of(10, ChronoUnit.SECONDS))
-                .flatMap(voiceChannel -> voiceChannel.getVoiceStates().count())
-                .map(count -> 1L == count)
-                .filter(isAloneInVoice -> isAloneInVoice)
+                .delayElements(Duration.of(2, ChronoUnit.SECONDS))
+                .flatMap(voiceChannel -> getNumberOfBotUsersInVoiceChannel(voiceChannel))
+                .map(nonBotUsersInVC -> nonBotUsersInVC == 0)
+                .filter(isBotAlone -> isBotAlone)
                 .next();
 
         return Mono.firstWithSignal(manuallyDisconnected, isBotAloneInVoiceAfter10Seconds)
@@ -66,6 +67,12 @@ public class VoiceConnectionService {
                 .filterWhen((ignore) -> voiceConnection.isConnected())
                 .flatMap((ignore) -> commandChannel.flatMap((messageChannel -> messageChannel.createMessage(getDisconnectMessage()))))
                 .flatMap((ignore) -> voiceConnection.disconnect());
+    }
+
+    private Mono<Integer> getNumberOfBotUsersInVoiceChannel(VoiceChannel voiceChannel) {
+        return voiceChannel.getVoiceStates()
+                .flatMap(VoiceState::getUser)
+                .reduce(0, (accum, user) -> accum + (user.isBot() ? 0 : 1));
     }
 
     private MessageCreateSpec getDisconnectMessage() {
