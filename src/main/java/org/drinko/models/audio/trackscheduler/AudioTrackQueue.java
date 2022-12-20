@@ -1,7 +1,6 @@
 package org.drinko.models.audio.trackscheduler;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import org.drinko.models.audio.trackscheduler.RepeatMode;
 
 import java.security.SecureRandom;
 import java.util.Collections;
@@ -45,7 +44,7 @@ public class AudioTrackQueue {
     }
 
     public void addToQueue(AudioTrack audio) {
-        if(audio == null) {
+        if (audio == null) {
             return;
         }
         if (shuffled) {
@@ -103,7 +102,7 @@ public class AudioTrackQueue {
     }
 
     public Queue<AudioTrack> getQueue() {
-        if(this.shuffled) {
+        if (this.shuffled) {
             return new LinkedList<>(shuffledQueue);
         }
         return new LinkedList<>(this.queue);
@@ -146,4 +145,62 @@ public class AudioTrackQueue {
         this.shuffledQueue.clear();
     }
 
+    public void remove(long index) {
+        final LinkedList<AudioTrack> tempList = new LinkedList();
+        int queueSize = size();
+        if (shuffled) {
+            for (int i = 0; i < queueSize; i++) {
+                AudioTrack track = shuffledQueue.poll();
+                if (i == index) {
+                    removeFirstOccurrence(track, false);
+                    break;
+                } else {
+                    tempList.add(track);
+                }
+            }
+            for (AudioTrack audioTrack : tempList) {
+                shuffledQueue.addFirst(audioTrack);
+            }
+            return;
+        }
+        for (int i = 0; i < queueSize; i++) {
+            if (i == index) {
+                queue.poll();
+                break;
+            } else {
+                tempList.add(queue.poll());
+            }
+        }
+        for (AudioTrack audioTrack : tempList) {
+            queue.addFirst(audioTrack);
+        }
+    }
+
+    public void removeFirstOccurrence(AudioTrack audioTrackToRemove, boolean fromShuffled) {
+        LinkedList<AudioTrack> tempList = new LinkedList<>();
+        if (fromShuffled) {
+            for (int i = 0; i < shuffledQueue.size(); i++) {
+                AudioTrack toRemove = shuffledQueue.poll();
+                if (toRemove.getIdentifier().equals(audioTrackToRemove.getIdentifier())) {
+                    break;
+                }
+                tempList.add(toRemove);
+            }
+        } else {
+            for (int i = 0; i < queue.size(); i++) {
+                AudioTrack toRemove = queue.poll();
+                if (toRemove.getIdentifier().equals(audioTrackToRemove.getIdentifier())) {
+                    break;
+                }
+                tempList.add(toRemove);
+            }
+        }
+        for (AudioTrack track : tempList) {
+            if (fromShuffled) {
+                shuffledQueue.addFirst(track);
+            } else {
+                queue.addFirst(track);
+            }
+        }
+    }
 }

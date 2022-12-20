@@ -162,6 +162,31 @@ public class TrackScheduler extends AudioEventAdapter {
         return SkipResult.success(numberToSkip);
     }
 
+    public RemoveResult removeTrack(long index) {
+        if (audioPlayer.getPlayingTrack() == null && !isTrackScheduledToPlay()) {
+            return RemoveResult.empty("The queue is empty!");
+        }
+        if (index < 0) {
+            return RemoveResult.invalid("Index of the track to remove must be greater than 0");
+        }
+        if(index > audioTrackQueue.size()) {
+            return RemoveResult.invalid("Index of track to remove must be less than than the number of tracks in the queue");
+        }
+        if(index == 0) {
+            if(isShuffled()) {
+                audioTrackQueue.removeFirstOccurrence(getCurrentlyPlayingOrScheduledTrack(),false);
+            }
+            final AudioTrack toPlayNext = audioTrackQueue.poll();
+            stopCurrentlyPlayingOrScheduledTrack();
+            if(toPlayNext != null) {
+                playTrack(toPlayNext);
+            }
+            return RemoveResult.success();
+        }
+        audioTrackQueue.remove(index - 1);
+        return RemoveResult.success();
+    }
+
     public void stopCurrentSongAndClearQueue() {
         stopCurrentlyPlayingOrScheduledTrack();
         this.audioTrackQueue.clearQueue();

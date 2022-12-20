@@ -121,7 +121,7 @@ public class ListCommand implements SlashCommand {
                     currentLine += PLAY_BUTTON_EMOJI;
                 }
             }
-            if(!isShuffled && entryList.get(i).getKey() - 1 != 0) {
+            if(entryList.get(i).getKey() - 1 != 0) {
                 currentLine += getPositionString(entryList.get(i).getKey() - 1);
             }
 
