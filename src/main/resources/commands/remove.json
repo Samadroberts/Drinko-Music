@@ -1,10 +1,10 @@
 {
   "name": "remove",
-  "description": "Remove a song from the queue",
+  "description": "Remove a track from the queue",
   "options": [
     {
       "name": "index",
-      "description": "The index of the song to remove",
+      "description": "The index of the track to remove",
       "type": 4,
       "required": "true"
     }

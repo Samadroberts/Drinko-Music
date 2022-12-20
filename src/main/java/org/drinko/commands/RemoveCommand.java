@@ -30,15 +30,15 @@ public class RemoveCommand implements SlashCommand {
             return event.reply("ERROR: Response from discord did not include guild_id").withEphemeral(true);
         }
 
-        return event.deferReply().then(removeSong(event, guildId, getIndexOfSongToRemove(event.getInteraction())));
+        return event.deferReply().then(removeTrack(event, guildId, getIndexOfSongToRemove(event.getInteraction())));
     }
 
-    private Mono<Void> removeSong(ChatInputInteractionEvent event, Snowflake guildId, long indexOfSongToRemove) {
+    private Mono<Void> removeTrack(ChatInputInteractionEvent event, Snowflake guildId, long indexOfSongToRemove) {
         final TrackScheduler scheduler = guildVoiceService.getGuildVoiceSupport(guildId).getTrackScheduler();
         RemoveResult result = scheduler.removeTrack(indexOfSongToRemove);
         switch (result.getState()) {
             case SUCCESS:
-                return event.createFollowup("Removed song at index " + indexOfSongToRemove + " from the queue").then();
+                return event.createFollowup("Removed track at index " + indexOfSongToRemove + " from the queue").then();
             case INVALID:
             case EMPTY:
                 return event.createFollowup(result.getMessage()).then();

@@ -23,6 +23,8 @@ A Discord music bot written in Java
   - If no page is provided the currently playing audio track and all audio tracks in the queue for the first page will be displayed. If the page is provided the audio tracks in the queue for that page will be displayed.
 - `/next` `number (optional)`
   - If no number is provided, the current audio track will be skipped and the next audio track in the queue will play. If a number is provided `number` of audio tracks will be skipped in the queue. Use `/list` to help you determine what the value of `number` should be if you are trying to skip to a specific audio track.
+- `/remove` `index`
+  - Removes the track at the specified index in the queue. An index of `0` will remove the currently playing track. Removing a track from a shuffled queue will also remove it from the unshuffled queue. Use `/list` to help you determine what the value of `index` should be if you are trying to remove to a specific audio track.
 - `/repeat` `type`
   - `type: All`
     - Repeats all audio tracks in the queue sequentially, indefinitely.
