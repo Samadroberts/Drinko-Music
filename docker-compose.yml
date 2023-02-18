@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DISCORD_TOKEN: /run/secrets/discord_token
+      YOUTUBE_USERNAME: /run/secrets/youtube_username
+      YOUTUBE_PASSWORD: /run/secrets/youtube_password
+    secrets:
+      - discord_token
+      - youtube_username
+      - youtube_password
