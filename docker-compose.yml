@@ -6,10 +6,6 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      DISCORD_TOKEN: /run/secrets/discord_token
-      YOUTUBE_USERNAME: /run/secrets/youtube_username
-      YOUTUBE_PASSWORD: /run/secrets/youtube_password
-    secrets:
-      - discord_token
-      - youtube_username
-      - youtube_password
+      DISCORD_TOKEN: ${DISCORD_TOKEN}
+      YOUTUBE_USERNAME: ${YOUTUBE_USERNAME}
+      YOUTUBE_PASSWORD: ${YOUTUBE_PASSWORD}
