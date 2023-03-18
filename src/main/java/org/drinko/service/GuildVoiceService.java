@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class GuildVoiceService {
     private final YoutubeAccountCredentials credentials;
-    Map<Snowflake, GuildVoiceSupport> voiceGuildMap = new ConcurrentHashMap<>();
+    private Map<Snowflake, GuildVoiceSupport> voiceGuildMap = new ConcurrentHashMap<>();
 
     public GuildVoiceSupport getGuildVoiceSupport(Snowflake guildId) {
         if (voiceGuildMap.containsKey(guildId)) {
