@@ -59,6 +59,13 @@ mvn package
 
 If you want to listen to age restricted YouTube videos you must provide a youtube account and password as parameters. If you do not provide an account and password age restricted YouTube videos will be hit or miss, some seem to load and other do not.
 
+
+**ENABLE THE FOLLOWING PRIVILEGED GATEWAY INTENTS**
+ - Message content intent
+ - Server Members Intent
+ - Presence Intent
+
+
 Set the following environment variables
  - `DISCORD_TOKEN` (required, your discord bot token)
  - `YOUTUBE_USERNAME` (optional)
