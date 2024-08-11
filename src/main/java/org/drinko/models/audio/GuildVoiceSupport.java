@@ -17,7 +17,6 @@ import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import discord4j.common.util.Snowflake;
 import discord4j.voice.AudioProvider;
 import lombok.Getter;
-import org.drinko.config.youtube.YoutubeAccountCredentials;
 import org.drinko.models.audio.trackscheduler.TrackScheduler;
 
 @Getter
@@ -30,19 +29,19 @@ public class GuildVoiceSupport {
 
     private final TrackScheduler trackScheduler;
 
-    public GuildVoiceSupport(Snowflake id, YoutubeAccountCredentials credentials) {
+    public GuildVoiceSupport(Snowflake id) {
         this.id = id;
         this.audioPlayerManager = new DefaultAudioPlayerManager();
         audioPlayerManager.getConfiguration().setFrameBufferFactory(NonAllocatingAudioFrameBuffer::new);
         AudioSourceManagers.registerLocalSource(audioPlayerManager);
 
-        registerRemoteSources(audioPlayerManager, credentials);
+        registerRemoteSources(audioPlayerManager);
         this.audioPlayer = audioPlayerManager.createPlayer();
         this.trackScheduler = new TrackScheduler(audioPlayer);
         this.audioProvider = new LavaplayerAudioProvider(audioPlayer);
     }
 
-    private void registerRemoteSources(AudioPlayerManager playerManager, YoutubeAccountCredentials credentials) {
+    private void registerRemoteSources(AudioPlayerManager playerManager) {
         playerManager.registerSourceManager(new YoutubeAudioSourceManager());
         playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
         playerManager.registerSourceManager(new BandcampAudioSourceManager());

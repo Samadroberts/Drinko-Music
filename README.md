@@ -57,9 +57,6 @@ mvn package
 
 ### Running the Application
 
-If you want to listen to age restricted YouTube videos you must provide a youtube account and password as parameters. If you do not provide an account and password age restricted YouTube videos will be hit or miss, some seem to load and other do not.
-
-
 **ENABLE THE FOLLOWING PRIVILEGED GATEWAY INTENTS**
  - Message content intent
  - Server Members Intent
@@ -68,29 +65,13 @@ If you want to listen to age restricted YouTube videos you must provide a youtub
 
 Set the following environment variables
  - `DISCORD_TOKEN` (required, your discord bot token)
- - `YOUTUBE_USERNAME` (optional)
- - `YOUTUBE_PASSWORD` (optional)
 
 Launch the server using:
 
 ```java -jar drinko-music-VERSION_NUMBER_HERE-SNAPSHOT.jar```
 
-
 ## Using Spring Args (RECOMMENDED LOCAL ONLY)
-
-**No YouTube credentials**
 ```
 java -jar -Ddiscord.api.token=DISCORD_TOKEN \
     drinko-music-VERSION_NUMBER_HERE-SNAPSHOT.jar
 ```
-
-**With YouTube Restricted Videos**
-```
-java -jar -Dorg.drinko.youtube.password=YOUTUBE_PASSWORD \
-    -Dorg.drinko.youtube.username=YOUTUBE_USERNAME \
-    -Ddiscord.api.token=DISCORD_TOKEN \
-    drinko-music-VERSION_NUMBER_HERE-SNAPSHOT.jar
-```
-
-
-
