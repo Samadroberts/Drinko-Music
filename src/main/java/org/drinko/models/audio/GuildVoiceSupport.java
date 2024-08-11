@@ -12,8 +12,8 @@ import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.track.playback.NonAllocatingAudioFrameBuffer;
+import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import discord4j.common.util.Snowflake;
 import discord4j.voice.AudioProvider;
 import lombok.Getter;
@@ -43,7 +43,7 @@ public class GuildVoiceSupport {
     }
 
     private void registerRemoteSources(AudioPlayerManager playerManager, YoutubeAccountCredentials credentials) {
-        playerManager.registerSourceManager(new YoutubeAudioSourceManager(true, credentials.getUsername(), credentials.getPassword()));
+        playerManager.registerSourceManager(new YoutubeAudioSourceManager());
         playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
         playerManager.registerSourceManager(new BandcampAudioSourceManager());
         playerManager.registerSourceManager(new VimeoAudioSourceManager());
