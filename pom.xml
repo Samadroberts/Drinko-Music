@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.drinko</groupId>
-    <artifactId>dfrinko-music</artifactId>
+    <artifactId>drinko-music</artifactId>
     <version>0.0.6-SNAPSHOT</version>
     <name>drinko-music</name>
     <properties>
