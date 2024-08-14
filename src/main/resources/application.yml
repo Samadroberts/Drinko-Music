@@ -8,3 +8,8 @@ server:
 discord:
   api:
     token: ${DISCORD_TOKEN}
+
+youtube:
+  api:
+    po-token: ${PO_TOKEN}
+    visitor-data: ${VISITOR_DATA}

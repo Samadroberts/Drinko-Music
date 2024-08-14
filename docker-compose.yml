@@ -7,6 +7,8 @@ services:
       dockerfile: Dockerfile
     environment:
       DISCORD_TOKEN: ${DISCORD_TOKEN}
+      PO_TOKEN: ${PO_TOKEN}
+      VISITOR_DATA: ${VISITOR_DATA}
       PORT: 80
     ports:
       - "80:80"
