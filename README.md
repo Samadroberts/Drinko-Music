@@ -65,7 +65,20 @@ mvn package
 
 Set the following environment variables
  - `DISCORD_TOKEN` (required, your discord bot token)
+ - `PO_TOKEN` (optional, YouTube Proof of Origin Token. See: [What the hell is a Proof of Origin Token](#what-the-hell-is-a-proof-of-origin-token))
+ - `VISITOR_DATA` (optional, YouTube Visitor data. See: [What the hell is a Proof of Origin Token](#what-the-hell-is-a-proof-of-origin-token)
 
+## What the hell is a Proof of Origin Token?
+A poToken, also known as a "Proof of Origin Token" is a way to identify what requests originate from. In YouTube's case, this is sent as a JavaScript challenge that browsers must evaluate, and send back the resolved string. Typically, this challenge would remain unsolved for bots as more often than not, they don't simulate an entire browser environment, instead only evaluating the minimum amount of JS required to do its job. Therefore, it's a reasonable assumption that if the challenge is not fulfilled, the request origin is a bot.
+
+To obtain a poToken, you can use https://github.com/iv-org/youtube-trusted-session-generator, by running the Python script or the docker image. Both methods will print a poToken after a successful run, which you can supply as environment variables to try and work around having automated requests blocked.
+
+> [!NOTE]
+> A `poToken` is not a silver bullet, and currently it only applies to requests made via the `WEB` client.
+>
+> At the time of writing, the most effective method for working around automated request blocking is to use IPv6 rotation. Which is not supported (yet...)
+
+## Launching the application
 Launch the server using:
 
 ```java -jar drinko-music-VERSION_NUMBER_HERE-SNAPSHOT.jar```
