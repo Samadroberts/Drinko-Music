@@ -5,18 +5,18 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.4</version>
+        <version>3.5.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.drinko</groupId>
     <artifactId>drinko-music</artifactId>
-    <version>0.0.11-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
     <name>drinko-music</name>
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <java.version>11</java.version>
-        <java.runtime.version>11</java.runtime.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <java.version>21</java.version>
+        <java.runtime.version>21</java.runtime.version>
     </properties>
     <dependencies>
         <dependency>

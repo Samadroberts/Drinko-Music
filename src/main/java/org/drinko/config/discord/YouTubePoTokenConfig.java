@@ -1,12 +1,12 @@
 package org.drinko.config.discord;
 
 import dev.lavalink.youtube.clients.Web;
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
 
 @Configuration
 @ConfigurationProperties("youtube.api")
