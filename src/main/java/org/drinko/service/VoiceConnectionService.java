@@ -4,10 +4,11 @@ import discord4j.common.util.Snowflake;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.VoiceStateUpdateEvent;
 import discord4j.core.object.VoiceState;
+import discord4j.core.object.entity.channel.AudioChannel;
 import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.object.entity.channel.VoiceChannel;
+import discord4j.core.spec.AudioChannelJoinSpec;
 import discord4j.core.spec.MessageCreateSpec;
-import discord4j.core.spec.VoiceChannelJoinSpec;
 import discord4j.voice.VoiceConnection;
 import lombok.RequiredArgsConstructor;
 import org.drinko.util.DrinkoEmbedSpecUtils;
@@ -26,23 +27,17 @@ public class VoiceConnectionService {
 
     private static final int DISCONNECT_PERIOD_SECONDS = 10;
 
-    public Mono<VoiceConnection> getNewOrExistingConnection(VoiceChannel voiceChannel, Mono<MessageChannel> commandChannel) {
+    public Mono<VoiceConnection> getNewOrExistingConnection(AudioChannel voiceChannel, Mono<MessageChannel> commandChannel) {
         return voiceChannel.getClient().getVoiceConnectionRegistry().getVoiceConnection(voiceChannel.getGuildId())
                 .switchIfEmpty(setupNewConnection(voiceChannel, commandChannel));
     }
 
-    private Mono<VoiceConnection> setupNewConnection(VoiceChannel voiceChannel, Mono<MessageChannel> commandChannel) {
-        Mono<VoiceConnection> newConnection = voiceChannel.join(getJoinSpec(voiceChannel));
+    private Mono<VoiceConnection> setupNewConnection(AudioChannel voiceChannel, Mono<MessageChannel> commandChannel) {
+        Mono<VoiceConnection> newConnection = voiceChannel.join(AudioChannelJoinSpec.builder().provider(guildVoiceService.getGuildVoiceSupport(voiceChannel.getGuildId()).getAudioProvider()).build());
         return newConnection
                 .doOnSuccess(voiceConnection -> {
                     handleDisconnectOnNewConnection(voiceConnection, commandChannel).subscribe();
                 });
-    }
-
-    private VoiceChannelJoinSpec getJoinSpec(VoiceChannel voiceChannel) {
-        return VoiceChannelJoinSpec.builder()
-                .provider(guildVoiceService.getGuildVoiceSupport(voiceChannel.getGuildId()).getAudioProvider())
-                .build();
     }
 
     private Mono<Void> handleDisconnectOnNewConnection(VoiceConnection voiceConnection, Mono<MessageChannel> commandChannel) {

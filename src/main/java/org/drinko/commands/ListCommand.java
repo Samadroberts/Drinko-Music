@@ -6,7 +6,7 @@ import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.object.command.ApplicationCommandInteractionOption;
 import discord4j.core.object.command.ApplicationCommandInteractionOptionValue;
 import discord4j.core.object.command.Interaction;
-import discord4j.core.object.reaction.ReactionEmoji;
+import discord4j.core.object.emoji.Emoji;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.core.spec.InteractionFollowupCreateSpec;
 import lombok.Getter;
@@ -89,9 +89,9 @@ public class ListCommand implements SlashCommand {
                 return Mono.empty();
             }
             if (isShuffled) {
-                return message.addReaction(ReactionEmoji.unicode("🔀")).then(message.addReaction(ReactionEmoji.unicode(repeatMode.getEmoji())));
+                return message.addReaction(Emoji.unicode("🔀")).then(message.addReaction(Emoji.unicode(repeatMode.getEmoji())));
             }
-            return message.addReaction(ReactionEmoji.unicode(repeatMode.getEmoji()));
+            return message.addReaction(Emoji.unicode(repeatMode.getEmoji()));
         });
     }
 
