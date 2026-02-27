@@ -18,6 +18,7 @@ import org.drinko.models.audio.loading.SupportedAudioPlaylistResultHandler;
 import org.drinko.models.audio.loading.SupportedAudioTrackResultHandler;
 import org.drinko.models.audio.loading.TrackQueuedState;
 import org.drinko.models.audio.youtube.YouTubeSearchResultHandler;
+import org.drinko.models.audio.youtube.YoutubeSearchResult;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -87,6 +88,16 @@ public class AudioLoadingService {
                             .build();
             }
         });
+    }
+
+    public Mono<YoutubeSearchResult> queryYoutube(Snowflake guildId, String query) {
+        final GuildVoiceSupport voiceSupport = guildVoiceService.getGuildVoiceSupport(guildId);
+
+        YouTubeSearchResultHandler searchResultHandler = new YouTubeSearchResultHandler();
+
+        voiceSupport.getAudioPlayerManager().loadItemOrdered(guildId, "ytsearch: " + query, searchResultHandler);
+
+        return searchResultHandler.loadResult();
     }
 
     private static final String QUERY_INSTRUCTIONS = "Please select a track using the buttons below.\n\n";
