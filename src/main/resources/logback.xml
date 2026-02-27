@@ -9,6 +9,8 @@
     <logger name="discord4j.core" level="INFO"/>
     <logger name="discord4j.gateway" level="INFO"/>
     <logger name="discord4j.gateway.client" level="INFO"/>
+    <logger name="discord4j.voice.PacketTransformer" level="OFF" />
+    <logger name="discord4j.voice.LocalVoiceReceiveTask" level="OFF" />
 
     <!-- Appenders -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">

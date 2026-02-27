@@ -6,4 +6,4 @@ WORKDIR drinko-music
 RUN apk add maven
 RUN mvn clean install -U -DskipTests && mvn package
 
-CMD ["java", "-jar", "target/drinko-music-0.2.0-SNAPSHOT.jar"]
+CMD ["java", "-jar", "target/drinko-music-0.2.1-SNAPSHOT.jar"]
