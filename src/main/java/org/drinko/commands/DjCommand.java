@@ -1,12 +1,14 @@
 package org.drinko.commands;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import discord4j.common.util.Snowflake;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.object.VoiceState;
 import discord4j.core.object.command.ApplicationCommandInteractionOption;
 import discord4j.core.object.command.ApplicationCommandInteractionOptionValue;
 import discord4j.core.object.command.Interaction;
 import discord4j.core.spec.InteractionFollowupCreateSpec;
+import discord4j.voice.VoiceConnection;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.drinko.commands.exceptions.CommandIssuerNotInVoiceChat;
@@ -24,7 +26,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-import static org.drinko.util.DrinkoEmbedSpecUtils.getFailedToLoadSongEmbed;
+import static org.drinko.models.audio.youtube.YoutubeSearchResult.YoutubeSearchResultState.LOADED;
 import static org.drinko.util.DrinkoEmbedSpecUtils.getSongLoadedEmbed;
 import static org.drinko.util.DrinkoEmbedSpecUtils.getSongQueueEmbed;
 
@@ -62,81 +64,81 @@ public class DjCommand implements SlashCommand {
 
     @Override
     public Mono<Void> handle(ChatInputInteractionEvent event) {
-        final String context = getLink(event.getInteraction());
+        final String context = getContext(event.getInteraction());
+
+        logContext(context);
 
 
-        Mono<VoiceState> voiceStateOrEmpty = event.getInteraction().getMember()
+        final Mono<Snowflake> voiceConnectionGuildId = event.getInteraction().getMember()
                 .map(member -> member.getVoiceState().switchIfEmpty(Mono.error(new CommandIssuerNotInVoiceChat())))
-                .orElseGet(() -> Mono.empty());
-
-
-        Mono<Void> handleSongLoad = voiceStateOrEmpty
+                .orElseGet(Mono::empty)
                 .onErrorResume(CommandIssuerNotInVoiceChat.class, (exception) -> event.createFollowup(exception.getMessage()).then(Mono.empty()))
                 .flatMap(VoiceState::getChannel)
                 .flatMap(voiceChannel -> voiceConnectionService.getNewOrExistingConnection(voiceChannel, event.getInteraction().getChannel()))
-                .flatMap(voiceConnection -> {
-                    DrinkoPlaylist playlist = chatClient.prompt()
-                            .system(SYSTEM_PROMPT)
-                            .user((u) -> u.text(USER_PROMPT).param("theme", context == null || context.isEmpty() ? "None" : context))
-                            .options(ChatOptions.builder()
-                                    .temperature(0.7)
-                                    .build())
-                            .call()
-                            .entity(DrinkoPlaylist.class);
-                    if (playlist != null && !playlist.songs.isEmpty()) {
-                        logger.info("Processing playlist: {}", playlist.intro());
-                        return Flux.fromIterable(playlist.songs)
-                                .doOnNext((song) -> {
-                                    logger.info("Song Added: Title='{}' | Artist='{}' | Reason='{}'",
-                                            song.title(),
-                                            song.artist(),
-                                            song.reasoning()
-                                    );
-                                })
-                                .flatMap((song -> {
+                .map(VoiceConnection::getGuildId)
+                .cache();
 
-                                    return audioLoadingService.queryYoutube(voiceConnection.getGuildId(), song.title + " " + song.artist)
-                                            .flatMap(youtubeSearchResult -> {
-                                        switch (youtubeSearchResult.getResult()) {
-                                            case LOADED:
-                                                AudioTrack track =  youtubeSearchResult.getSearchResults().getFirst();
-                                                GuildVoiceSupport voiceSupport = guildVoiceService.getGuildVoiceSupport(voiceConnection.getGuildId());
-                                                switch (voiceSupport.getTrackScheduler().queue(track)) {
-                                                    case QUEUED:
-                                                        return event.createFollowup(InteractionFollowupCreateSpec.builder()
-                                                                .addEmbed(getSongQueueEmbed(track.getInfo().title))
-                                                                .build()).then();
-                                                    case PLAYING_NOW:
-                                                        return event.createFollowup(InteractionFollowupCreateSpec.builder()
-                                                                .addEmbed(getSongLoadedEmbed(track.getInfo().title))
-                                                                .build()).then();
-                                                    case FAILED:
-                                                    default:
-                                                        return Mono.empty();
-                                                }
-                                            case FAILED_NO_MATCH:
-                                            case FAILED_LOADING:
+        Mono<DrinkoPlaylist> discordPlaylistMono = Mono.fromCallable(() -> this.fetchPlayList(context));
+
+        Mono<List<Void>> handleSongsLoaded = voiceConnectionGuildId.flatMap(guildId ->
+                discordPlaylistMono.flatMap((playlist) -> Flux.fromIterable(playlist.songs)
+                        .doOnNext(this::logResults)
+                        .flatMap(song -> audioLoadingService.queryYoutube(guildId, song.title + " " + song.artist)
+                                .flatMap(youtubeSearchResult -> {
+                                    if (youtubeSearchResult.getResult() == LOADED) {
+                                        AudioTrack track = youtubeSearchResult.getSearchResults().getFirst();
+                                        GuildVoiceSupport voiceSupport = guildVoiceService.getGuildVoiceSupport(guildId);
+                                        switch (voiceSupport.getTrackScheduler().queue(track)) {
+                                            case QUEUED:
+                                                return event.createFollowup(InteractionFollowupCreateSpec.builder()
+                                                        .addEmbed(getSongQueueEmbed(track.getInfo().title))
+                                                        .build()).then();
+                                            case PLAYING_NOW:
+                                                return event.createFollowup(InteractionFollowupCreateSpec.builder()
+                                                        .addEmbed(getSongLoadedEmbed(track.getInfo().title))
+                                                        .build()).then();
                                             default:
-                                                return  Mono.empty();
+                                                return Mono.empty();
                                         }
-                                    });
-                                }))
-                                .collectList()
-                                .then();
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+                                    }
+                                    return Mono.empty();
+                                })
+                        ).collectList()
+                )
+        );
 
-        return event.deferReply().then(handleSongLoad.then());
+        return event.deferReply().then(handleSongsLoaded.then());
     }
 
-    private String getLink(Interaction interaction) {
+    private DrinkoPlaylist fetchPlayList(final String context) {
+        return chatClient.prompt()
+                .system(SYSTEM_PROMPT)
+                .user((u) -> u.text(USER_PROMPT).param("theme", context))
+                .options(ChatOptions.builder()
+                        .temperature(0.7)
+                        .build())
+                .call()
+                .entity(DrinkoPlaylist.class);
+    }
+
+    private void logContext(final String context) {
+        logger.info("Crafting prompt with context: {}", context);
+    }
+
+    private void logResults(final DrinkoPlaylist.Song song) {
+        logger.info("Song Added: Title='{}' | Artist='{}' | Reason='{}'",
+                song.title(),
+                song.artist(),
+                song.reasoning()
+        );
+    }
+
+    private String getContext(Interaction interaction) {
         return interaction.getCommandInteraction()
                 .flatMap(commandInteraction -> commandInteraction.getOption(Option.LINK.value))
                 .flatMap(ApplicationCommandInteractionOption::getValue)
                 .map(ApplicationCommandInteractionOptionValue::asString)
-                .orElse(null);
+                .orElse("None");
     }
 
     @RequiredArgsConstructor
@@ -150,6 +152,7 @@ public class DjCommand implements SlashCommand {
             String intro,
             List<Song> songs
     ) {
-        public record Song(String title, String artist, String reasoning) {}
+        public record Song(String title, String artist, String reasoning) {
+        }
     }
 }

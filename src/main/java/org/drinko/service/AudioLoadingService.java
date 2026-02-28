@@ -66,16 +66,10 @@ public class AudioLoadingService {
     }
 
     public Mono<InteractionFollowupCreateSpec> attemptToQueryYoutube(Snowflake guildId, String query, Mono<MessageChannel> channel) {
-        final GuildVoiceSupport voiceSupport = guildVoiceService.getGuildVoiceSupport(guildId);
-
-        YouTubeSearchResultHandler searchResultHandler = new YouTubeSearchResultHandler();
-
-        voiceSupport.getAudioPlayerManager().loadItemOrdered(guildId, "ytsearch: " + query, searchResultHandler);
-
-        return searchResultHandler.loadResult().map(searchResult -> {
+        return queryYoutube(guildId, query).map(searchResult -> {
             switch (searchResult.getResult()) {
                 case LOADED:
-                    queryService.addSearchResults(guildId, (audioTrack -> getCustomButtonId(audioTrack)), searchResult.getSearchResults());
+                    queryService.addSearchResults(guildId, (AudioLoadingService::getCustomButtonId), searchResult.getSearchResults());
                     return createSearchFollowup(searchResult.getSearchResults());
                 case FAILED_NO_MATCH:
                     return InteractionFollowupCreateSpec.builder()
