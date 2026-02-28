@@ -19,6 +19,10 @@ A Discord music bot written in Java
 - `/play` `link-or-query`
     - Will play an audio track if `link-or-query` is a link from one of the [supported sources](#supported-sources).
     - If the link is not from a supported source, YouTube will be queried and a user will be able to select from the top five results.
+- `/dj` `context (optional)`
+    - Uses AI to curate 5 unique songs to be enqueued. Searches YouTube for the songs and picks the first result.
+    - Context can be provided to influence and guide the AI to pick songs of a particular theme/genre/artist etc.
+    - Results are not guaranteed to be related to the provided context relies heavily on YouTube search to return relevant results.
 - `/list` `page (optional)`
   - If no page is provided the currently playing audio track and all audio tracks in the queue for the first page will be displayed. If the page is provided the audio tracks in the queue for that page will be displayed.
 - `/next` `number (optional)`
@@ -67,6 +71,7 @@ Set the following environment variables
  - `DISCORD_TOKEN` (required, your discord bot token)
  - `PO_TOKEN` (optional, YouTube Proof of Origin Token. See: [What the hell is a Proof of Origin Token](#what-the-hell-is-a-proof-of-origin-token))
  - `VISITOR_DATA` (optional, YouTube Visitor data. See: [What the hell is a Proof of Origin Token](#what-the-hell-is-a-proof-of-origin-token)
+ - `GOOGLE_GENAI_API_KEY` (required for the dj Command, your [Google Ai studio apikey](https://aistudio.google.com/app/api-keys)))
 
 ## What the hell is a Proof of Origin Token?
 A poToken, also known as a "Proof of Origin Token" is a way to identify what requests originate from. In YouTube's case, this is sent as a JavaScript challenge that browsers must evaluate, and send back the resolved string. Typically, this challenge would remain unsolved for bots as more often than not, they don't simulate an entire browser environment, instead only evaluating the minimum amount of JS required to do its job. Therefore, it's a reasonable assumption that if the challenge is not fulfilled, the request origin is a bot.

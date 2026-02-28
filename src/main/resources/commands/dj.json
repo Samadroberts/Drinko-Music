@@ -1,0 +1,12 @@
+{
+  "name": "dj",
+  "description": "Use AI to automatically curate songs",
+  "options": [
+    {
+      "name": "context",
+      "description": "Any context to provide the dj to influence the tracks enqueued",
+      "type": 3,
+      "required": "false"
+    }
+  ]
+}
