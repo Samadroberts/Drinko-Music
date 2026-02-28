@@ -9,6 +9,7 @@ services:
       DISCORD_TOKEN: ${DISCORD_TOKEN}
       PO_TOKEN: ${PO_TOKEN}
       VISITOR_DATA: ${VISITOR_DATA}
+      GOOGLE_GENAI_API_KEY: ${GOOGLE_GENAI_API_KEY}
       PORT: 80
     ports:
       - "80:80"

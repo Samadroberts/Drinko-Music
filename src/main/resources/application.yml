@@ -13,3 +13,9 @@ youtube:
   api:
     po-token: ${PO_TOKEN}
     visitor-data: ${VISITOR_DATA}
+
+spring:
+  ai:
+    google:
+      genai:
+        api-key: ${GOOGLE_GENAI_API_KEY}

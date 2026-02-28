@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.drinko</groupId>
     <artifactId>drinko-music</artifactId>
-    <version>0.2.1-SNAPSHOT</version>
+    <version>0.2.2-SNAPSHOT</version>
     <name>drinko-music</name>
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
