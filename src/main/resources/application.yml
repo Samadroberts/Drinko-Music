@@ -13,6 +13,9 @@ youtube:
   api:
     po-token: ${PO_TOKEN}
     visitor-data: ${VISITOR_DATA}
+    remote-cipher-url:  ${REMOTE_CIPHER_URL:https://cipher.kikkia.dev/}
+    remote-cipher-password: ${REMOTE_CIPHER_PASSWORD}
+    remote-cipher-user-agent: ${REMOTE_CIPHER_AGENT_NAME}
 
 spring:
   ai:

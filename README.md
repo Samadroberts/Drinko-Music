@@ -72,6 +72,13 @@ Set the following environment variables
  - `PO_TOKEN` (optional, YouTube Proof of Origin Token. See: [What the hell is a Proof of Origin Token](#what-the-hell-is-a-proof-of-origin-token))
  - `VISITOR_DATA` (optional, YouTube Visitor data. See: [What the hell is a Proof of Origin Token](#what-the-hell-is-a-proof-of-origin-token)
  - `GOOGLE_GENAI_API_KEY` (required for the dj Command, your [Google Ai studio apikey](https://aistudio.google.com/app/api-keys)))
+ - `REMOTE_CIPHER_URL` (optional, remote cipher server defaults to https://cipher.kikkia.dev/ if not overridden . See: [Using a remote cipher server](#using-a-remote-cipher-server) and [youtube source documentation](https://github.com/lavalink-devs/youtube-source?tab=readme-ov-file#using-a-remote-cipher-server)
+ - `REMOTE_CIPHER_PASSWORD` (optional, remote cipher password for self hosted servers. See: [Using a remote cipher server](#using-a-remote-cipher-server) and [youtube source documentation](https://github.com/lavalink-devs/youtube-source?tab=readme-ov-file#using-a-remote-cipher-server)
+ - `REMOTE_CIPHER_AGENT_NAME` (optional, agent name for cipher server. See: [Using a remote cipher server](#using-a-remote-cipher-server) and [youtube source documentation](https://github.com/lavalink-devs/youtube-source?tab=readme-ov-file#using-a-remote-cipher-server)
+
+
+## Using a remote cipher server
+It becomes harder and harder to keep up with YouTube's cipher changes, as they become more frequent and complex. To help with this, you can use a remote cipher server to handle signature deciphering for you. You can use [yt-cipher](https://github.com/kikkia/yt-cipher), which is a simple Deno server that exposes a REST API for deciphering signatures. Check out the repository for more information on how to set it up.
 
 ## What the hell is a Proof of Origin Token?
 A poToken, also known as a "Proof of Origin Token" is a way to identify what requests originate from. In YouTube's case, this is sent as a JavaScript challenge that browsers must evaluate, and send back the resolved string. Typically, this challenge would remain unsolved for bots as more often than not, they don't simulate an entire browser environment, instead only evaluating the minimum amount of JS required to do its job. Therefore, it's a reasonable assumption that if the challenge is not fulfilled, the request origin is a bot.

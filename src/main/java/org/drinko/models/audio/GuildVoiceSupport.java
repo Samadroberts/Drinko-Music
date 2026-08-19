@@ -14,6 +14,12 @@ import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceMan
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.track.playback.NonAllocatingAudioFrameBuffer;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
+import dev.lavalink.youtube.YoutubeSourceOptions;
+import dev.lavalink.youtube.clients.AndroidMusic;
+import dev.lavalink.youtube.clients.Music;
+import dev.lavalink.youtube.clients.Tv;
+import dev.lavalink.youtube.clients.Web;
+import dev.lavalink.youtube.clients.WebEmbedded;
 import discord4j.common.util.Snowflake;
 import discord4j.voice.AudioProvider;
 import lombok.Getter;
@@ -26,11 +32,12 @@ public class GuildVoiceSupport {
     private final AudioPlayerManager audioPlayerManager;
     private final AudioPlayer audioPlayer;
     private final AudioProvider audioProvider;
-
     private final TrackScheduler trackScheduler;
+    private final YoutubeSourceOptions youtubeSourceOptions;
 
-    public GuildVoiceSupport(Snowflake id) {
+    public GuildVoiceSupport(Snowflake id, YoutubeSourceOptions youtubeSourceOptions) {
         this.id = id;
+        this.youtubeSourceOptions = youtubeSourceOptions;
         this.audioPlayerManager = new DefaultAudioPlayerManager();
         audioPlayerManager.getConfiguration().setFrameBufferFactory(NonAllocatingAudioFrameBuffer::new);
         AudioSourceManagers.registerLocalSource(audioPlayerManager);
@@ -42,7 +49,14 @@ public class GuildVoiceSupport {
     }
 
     private void registerRemoteSources(AudioPlayerManager playerManager) {
-        playerManager.registerSourceManager(new YoutubeAudioSourceManager());
+        playerManager.registerSourceManager(new YoutubeAudioSourceManager(youtubeSourceOptions,
+//              # No reason for this just trying whatever works
+                new Web(),
+                new Music(),
+                new AndroidMusic(),
+                new Tv(),
+                new WebEmbedded())
+        );
         playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
         playerManager.registerSourceManager(new BandcampAudioSourceManager());
         playerManager.registerSourceManager(new VimeoAudioSourceManager());

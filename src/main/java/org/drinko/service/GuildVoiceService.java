@@ -1,5 +1,6 @@
 package org.drinko.service;
 
+import dev.lavalink.youtube.YoutubeSourceOptions;
 import discord4j.common.util.Snowflake;
 import lombok.RequiredArgsConstructor;
 import org.drinko.models.audio.GuildVoiceSupport;
@@ -12,12 +13,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class GuildVoiceService {
     private Map<Snowflake, GuildVoiceSupport> voiceGuildMap = new ConcurrentHashMap<>();
+    private final YoutubeSourceOptions youtubeSourceOptions;
 
     public GuildVoiceSupport getGuildVoiceSupport(Snowflake guildId) {
         if (voiceGuildMap.containsKey(guildId)) {
             return voiceGuildMap.get(guildId);
         }
-        GuildVoiceSupport guildVoiceSupport = voiceGuildMap.computeIfAbsent(guildId, (key) -> new GuildVoiceSupport(guildId));
+        GuildVoiceSupport guildVoiceSupport = voiceGuildMap.computeIfAbsent(guildId, (key) -> new GuildVoiceSupport(guildId, youtubeSourceOptions));
         return guildVoiceSupport;
     }
 
